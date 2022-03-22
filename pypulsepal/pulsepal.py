@@ -89,74 +89,75 @@ class PulsePalObject(object):
 
     def programOutputChannelParam(self, paramName, channel, value):
         raise NotImplementedError("TODO: function too complex for flake8")
-#         originalValue = value
-#         if isinstance(paramName, str):
-#             paramCode = self.outputParameterNames.index(paramName) + 1
-#         else:
-#             paramCode = paramName
 
-#         if 2 <= paramCode <= 3 or paramCode == 17:
-#             value = math.ceil(
-#                 ((value + 10) / float(20)) * self.dac_bitMax
-#             )  # Convert volts to bits
-#             if self.model == 1:
-#                 self.Port.write(
-#                     (self.OpMenuByte, 74, paramCode, channel, value), "uint8"
-#                 )
-#             else:
-#                 self.Port.write(
-#                     (self.OpMenuByte, 74, paramCode, channel), "uint8", value, "uint16"
-#                 )
-#         elif 4 <= paramCode <= 11:
-#             self.Port.write(
-#                 (self.OpMenuByte, 74, paramCode, channel),
-#                 "uint8",
-#                 value * self.cycleFrequency,
-#                 "uint32",
-#             )
-#         else:
-#             self.Port.write((self.OpMenuByte, 74, paramCode, channel, value), "uint8")
-#         # Receive acknowledgement
-#         ok = self.Port.read(1, "uint8")
-#         if len(ok) == 0:
-#             raise PulsePalError(
-#                 "Error: Pulse Pal did not return an acknowledgement byte after a call to programOutputChannelParam."
-#             )
-#         # Update the PulsePal object's parameter fields
-#         if paramCode == 1:
-#             self.isBiphasic[channel] = originalValue
-#         elif paramCode == 2:
-#             self.phase1Voltage[channel] = originalValue
-#         elif paramCode == 3:
-#             self.phase2Voltage[channel] = originalValue
-#         elif paramCode == 4:
-#             self.phase1Duration[channel] = originalValue
-#         elif paramCode == 5:
-#             self.interPhaseInterval[channel] = originalValue
-#         elif paramCode == 6:
-#             self.phase2Duration[channel] = originalValue
-#         elif paramCode == 7:
-#             self.interPulseInterval[channel] = originalValue
-#         elif paramCode == 8:
-#             self.burstDuration[channel] = originalValue
-#         elif paramCode == 9:
-#             self.interBurstInterval[channel] = originalValue
-#         elif paramCode == 10:
-#             self.pulseTrainDuration[channel] = originalValue
-#         elif paramCode == 11:
-#             self.pulseTrainDelay[channel] = originalValue
-#         elif paramCode == 12:
-#             self.linkTriggerChannel1[channel] = originalValue
-#         elif paramCode == 13:
-#             self.linkTriggerChannel2[channel] = originalValue
-#         elif paramCode == 14:
-#             self.customTrainID[channel] = originalValue
-#         elif paramCode == 15:
-#             self.customTrainTarget[channel] = originalValue
-#         elif paramCode == 16:
-#             self.customTrainLoop[channel] = originalValue
-#         elif paramCode == 17:
-#             self.restingVoltage[channel] = originalValue
+    #         originalValue = value
+    #         if isinstance(paramName, str):
+    #             paramCode = self.outputParameterNames.index(paramName) + 1
+    #         else:
+    #             paramCode = paramName
+
+    #         if 2 <= paramCode <= 3 or paramCode == 17:
+    #             value = math.ceil(
+    #                 ((value + 10) / float(20)) * self.dac_bitMax
+    #             )  # Convert volts to bits
+    #             if self.model == 1:
+    #                 self.Port.write(
+    #                     (self.OpMenuByte, 74, paramCode, channel, value), "uint8"
+    #                 )
+    #             else:
+    #                 self.Port.write(
+    #                     (self.OpMenuByte, 74, paramCode, channel), "uint8", value, "uint16"
+    #                 )
+    #         elif 4 <= paramCode <= 11:
+    #             self.Port.write(
+    #                 (self.OpMenuByte, 74, paramCode, channel),
+    #                 "uint8",
+    #                 value * self.cycleFrequency,
+    #                 "uint32",
+    #             )
+    #         else:
+    #             self.Port.write((self.OpMenuByte, 74, paramCode, channel, value), "uint8")
+    #         # Receive acknowledgement
+    #         ok = self.Port.read(1, "uint8")
+    #         if len(ok) == 0:
+    #             raise PulsePalError(
+    #                 "Error: Pulse Pal did not return an acknowledgement byte after a call to programOutputChannelParam."
+    #             )
+    #         # Update the PulsePal object's parameter fields
+    #         if paramCode == 1:
+    #             self.isBiphasic[channel] = originalValue
+    #         elif paramCode == 2:
+    #             self.phase1Voltage[channel] = originalValue
+    #         elif paramCode == 3:
+    #             self.phase2Voltage[channel] = originalValue
+    #         elif paramCode == 4:
+    #             self.phase1Duration[channel] = originalValue
+    #         elif paramCode == 5:
+    #             self.interPhaseInterval[channel] = originalValue
+    #         elif paramCode == 6:
+    #             self.phase2Duration[channel] = originalValue
+    #         elif paramCode == 7:
+    #             self.interPulseInterval[channel] = originalValue
+    #         elif paramCode == 8:
+    #             self.burstDuration[channel] = originalValue
+    #         elif paramCode == 9:
+    #             self.interBurstInterval[channel] = originalValue
+    #         elif paramCode == 10:
+    #             self.pulseTrainDuration[channel] = originalValue
+    #         elif paramCode == 11:
+    #             self.pulseTrainDelay[channel] = originalValue
+    #         elif paramCode == 12:
+    #             self.linkTriggerChannel1[channel] = originalValue
+    #         elif paramCode == 13:
+    #             self.linkTriggerChannel2[channel] = originalValue
+    #         elif paramCode == 14:
+    #             self.customTrainID[channel] = originalValue
+    #         elif paramCode == 15:
+    #             self.customTrainTarget[channel] = originalValue
+    #         elif paramCode == 16:
+    #             self.customTrainLoop[channel] = originalValue
+    #         elif paramCode == 17:
+    #             self.restingVoltage[channel] = originalValue
 
     def programTriggerChannelParam(self, paramName, channel, value):
         originalValue = value
