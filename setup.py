@@ -13,18 +13,20 @@ with open(path.join(this_directory, "LICENSE")) as f:
 
 
 setup(
-    name="templatepy",
+    name="pypulsepal",
     version="0.0.1.dev0",
-    description="templatepy",
+    description="pypulsepal",
     long_description=long_description,
     long_description_content_type="text/markdown",
     python_requires=">=3.6",
     packages=find_packages(),
-    url="https://github.com/larsrollik/templatepy",
+    url="https://github.com/larsrollik/pypulsepal",
     author="Lars B. Rollik",
     author_email="L.B.Rollik@protonmail.com",
     license=license_text,
-    install_requires=[],
+    install_requires=[
+        "pybpod-api",  # for Arcom
+    ],
     extras_require={
         "dev": [
             "black",
@@ -39,9 +41,4 @@ setup(
     },
     zip_safe=False,
     include_package_data=True,
-    entry_points={
-        "console_scripts": [
-            "console_script_name = module.path.to.function:function_name",
-        ],
-    },
 )
