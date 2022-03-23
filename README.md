@@ -1,44 +1,155 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6360738.svg)](https://doi.org/10.5281/zenodo.6360738)
-[![Website](https://img.shields.io/website?up_message=online&url=https%3A%2F%2Fgithub.com/larsrollik/templatepy)](https://github.com/larsrollik/templatepy)
-[![PyPI](https://img.shields.io/pypi/v/templatepy.svg)](https://pypi.org/project/templatepy)
-[![Wheel](https://img.shields.io/pypi/wheel/templatepy.svg)](https://pypi.org/project/templatepy)
+[![Website](https://img.shields.io/website?up_message=online&url=https%3A%2F%2Fgithub.com/larsrollik/pypulsepal)](https://github.com/larsrollik/pypulsepal)
+[![PyPI](https://img.shields.io/pypi/v/pypulsepal.svg)](https://pypi.org/project/pypulsepal)
+[![Wheel](https://img.shields.io/pypi/wheel/pypulsepal.svg)](https://pypi.org/project/pypulsepal)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
 
 
-# templatepy
-Template repo for python repositories & PyPi integration
+# PyPulsePal
+Python API for the PulsePal open-source pulse train generator
 ---
+This package provides an API to the [PulsePal] hardware.
+This API is a re-implementation of the original [PulsePal Python 3 API] that draws from the `pybpod-api` communication protoool.
+
+## Example usage
+
+#### script/function
+```python
+from pypulsepal import PulsePal
+
+serial_port = "/dev/ttyACM0"  # for unix or "COM"-style port names for Windows
+
+# Create PulsePal object
+pp = PulsePal(serial_port=serial_port)
+
+# Set parameters
+
+## Manually
+pp.program_one_param(channel=2, param_name="phase1Duration", param_value=.002)
+
+## Via convencience functions
+pp.set_resting_voltage(channel=2, voltage=4.2)
+
+# Upload parameters
+pp.upload_all()
+
+# Trigger channels
+pp.trigger_selected_channels(channel_2=True, channel_4=True)
+pp.trigger_all_channels()
+
+# Stop outputs
+pp.stop_all_outputs()
+
+# Save settings (also done automatically on disconnect)
+pp.save_settings()
 
 
-## Usage & file overview
+```
 
-- `setup.py`: to install the package with `pip`, lists dependencies in `install_requires` keyword.
-  - Install development version for features below with `pip install -e package[dev]` to select `extras_require` packages as well
-- `.pre-commit-config.yaml`: use [pre-commit](https://pre-commit.com) to run code formatting (e.g. with [black](https://github.com/psf/black) and `flake8`) and PEP compliance checks
-  - Install pre-commit hook with `pre-commit install` (Note: only installs it in the current virtual environment)
-- `.toml`: config for black code formatter (see above)
-- `setup.cfg`: config for [bump2version](https://github.com/c4urself/bump2version) and `flake8` formatting (see pre-commit)
-- `MANIFEST.in`: description to select included files and directories for installation (see [here](https://packaging.python.org/en/latest/guides/using-manifest-in) for details)
-- `LICENSE`: legal info about sharing and using of this code
-- `README.md`: markdown readme file
-- `.github`: folder that contains github automation workflows and issues templates
-  - workflow for linting: install pre-commit hooks locally via `pre-commit install` in the repo dir
-  - workflow for uploading package to [pypi](pypi.org): (1) get pypi API key in your account, (2) add new github repo secret for actions at [https://github.com/larsrollik/templatepy/settings/secrets/actions/new](https://github.com/larsrollik/templatepy/settings/secrets/actions/new) as `TWINE_API_KEY`, (3) create new release by tagging a commit with `git tag $TAG_NAME` or on github at [https://github.com/larsrollik/templatepy/releases/new](https://github.com/larsrollik/templatepy/releases/new)
-- `.gitignore`: ignored files/folders in git tools
-- `package`: placeholder folder for any python package that is configured for install via `setup.py`
+#### as context manager
+```python
+import time
+from pypulsepal import PulsePal
+
+with PulsePal(serial_port="/dev/ttyACM0") as pp:
+    # set params
+    pp.upload_all()
+
+    # do something
+    time.sleep(2)
+
+```
+
+#### Write `default` params to all channels
+
+```python
+from pypulsepal.write_tests import write_default_settings
+
+write_default_settings(serial_port="/dev/ttyACM0")
+
+```
+
+#### Write (funky) `test` params to all channels
+
+```python
+from pypulsepal.write_tests import write_test_settings_for_manual_check
+
+write_test_settings_for_manual_check(serial_port="/dev/ttyACM0")
+
+```
 
 
-## TODO for adapting template to new project
+## Installation
+#### pip
+```shell
+pip install pypulsepal
+```
+#### git
+```shell
+git clone https://github.com/larsrollik/pypulsepal.git
+cd pypulsepal/
+pip install -e .
+```
+#### pip + git
+```shell
+pip install git+https://github.com/larsrollik/pypulsepal.git
+```
 
-- [ ] Change package name: (1) `package` folder, (2) README.md, (3) `name` argument in `setup.py`, (4) `.github/workflows` files, (5) `setup.cfg`: `[bumpversion:file:PACKAGEFOLDER/__init__.py]`
-- [ ] Change details about project author, etc. in `setup.py`, `README.md`, and `package/__init__.py`
-- [ ] Change license holder in `LICENSE`
-- [ ] Verify inclusions/exclusions of installable files/folders in `MANIFEST.in`
-- [ ] Check `.gitignore` contains relevant criteria
-- [ ] Add all locations to `setup.cfg` that will contain the version string. Use same syntax as for `[bumpversion:file:PACKAGEFOLDER/__init__.py]` line to describe how to find version on version increment
-- [ ] Add repository secret to upload to pypi via github action on release/commit tag (see above)
-- [ ] Upload to [Zenodo](https://zenodo.org) if is publication: (1) Connect Zenodo to Github account, (2) Flip switch on zenodo view of repo, (3) Create new release version of github repo (tag or manual), (4) Wait! Zenodo view with DOI assignment should update within about a minute, (5) Add DOI batch to repo `README`
+## Problems & issues
+Please open [issues](https://github.com/larsrollik/pypulsepal/issues) or [pull-requests](https://github.com/larsrollik/pypulsepal/pulls) in this repository.
+
+## Citation
+Please cite the original [PulsePal] and [PyBpod] code and publications that this package is based on.
+
+To cite `PyPulsePal` with a reference to the current version (as publicly documented on Zenodo), please use:
+> Rollik, Lars B. (2021). PyPulsePal: Python API for the PulsePal open-source pulse train generator. doi: [--doi--](https://doi.org/--doi--).
+
+**BibTeX**
+```BibTeX
+@misc{rollik2022pypulsepal,
+    author       = {Lars B. Rollik},
+    title        = {{PyPulsePal: Python API for the PulsePal open-source pulse train generator}},
+    year         = {2022},
+    month        = mar,
+    publisher    = {Zenodo},
+    url          = {https://doi.org/--doi--},
+    doi          = {--doi--},
+  }
+```
+
+## License & sources
+This software is released under the **[GNU GPL v3.0](https://github.com/larsrollik/pypulsepal/blob/main/LICENSE)**.
+
+This work is derived from the [Sanworks PulsePal Python API](https://github.com/sanworks/PulsePal/tree/develop) ([commit: 5bb189f](https://github.com/sanworks/PulsePal/commit/5bb189fec8d7435433b8c23f7bae520f92e271af)).
+
+The architecture of the API is imported and inspired by the `pybpodapi.com.arcom` module from the [pybpod-api](https://github.com/pybpod/pybpod-api).
+
+For changes from the original implementation, see the git history since [commit 972bc1e](https://github.com/larsrollik/pypulsepal/commit/972bc1ed3d07b6809e6cbcd05373be3b76ae5b5b).
+
+## Useful code references
+- [PyBpod com ArCOM]
+- [PyBpod com protocol]
+- [PyBpod message headers]
+- [PulsePal Python 3 API]
+- [PulsePal .ino file]
+- [PulsePal param definitions]
 
 
-## License
-This software is released under the **[BSD 3-Clause License](https://github.com/larsrollik/templatepy/blob/main/LICENSE)**
+## TODO
+- [ ] Simplify parameter dicts in `definitions`: into nested dict with first level for name, then standard sub-dict (default value, dtype, dtype legacy(model 1), scaling, )
+- [ ] Complete API functions with all PulsePal opcodes, e.g. for Arduino logic levels (see [PulsePal USB v2 opcode list])
+- [ ] Move PulsePal hardware settings to init and remove defaults for easier upgrade in future
+- [ ] API function to accept list of dicts (from json settings file)
+  - to make overwrites on channels to get from value-based logic to channel parameter sets
+  - add write function to save all settings to json for documentation
+
+[//]: # (links)
+[Pulsepal]: https://github.com/sanworks/PulsePal
+[PyBpod]: https://github.com/pybpod/pybpod
+[PyBpod com ArCOM]: https://github.com/pybpod/pybpod-api/blob/master/pybpodapi/com/arcom.py
+[PyBpod com protocol]: https://github.com/pybpod/pybpod-api/blob/master/pybpodapi/bpod/bpod_com_protocol.py
+[PyBpod message headers]: https://github.com/pybpod/pybpod-api/blob/master/pybpodapi/com/protocol/send_msg_headers.py
+[PulsePal Python 3 API]: https://github.com/sanworks/PulsePal/blob/develop/Python/Python3/PulsePal.py
+[PulsePal .ino file]: https://github.com/sanworks/PulsePal/blob/develop/Firmware/PulsePal_2_0_1/PulsePal_2_0_1.ino
+[PulsePal param definitions]: https://sites.google.com/site/pulsepalwiki/matlab-gnu-octave/functions/programpulsepalparam
+[PulsePal USB v2 opcode list]: https://sites.google.com/site/pulsepalwiki/usb-serial-interface/usb-interface-v2-x

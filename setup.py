@@ -25,7 +25,8 @@ setup(
     author_email="L.B.Rollik@protonmail.com",
     license=license_text,
     install_requires=[
-        "pybpod-api",  # for Arcom
+        "tqdm",
+        "pybpod-api",  # for ArCOM
     ],
     extras_require={
         "dev": [
