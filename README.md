@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6360738.svg)](https://doi.org/10.5281/zenodo.6360738)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6379627.svg)](https://doi.org/10.5281/zenodo.6379627)
 [![Website](https://img.shields.io/website?up_message=online&url=https%3A%2F%2Fgithub.com/larsrollik/pypulsepal)](https://github.com/larsrollik/pypulsepal)
 [![PyPI](https://img.shields.io/pypi/v/pypulsepal.svg)](https://pypi.org/project/pypulsepal)
 [![Wheel](https://img.shields.io/pypi/wheel/pypulsepal.svg)](https://pypi.org/project/pypulsepal)
@@ -102,7 +102,7 @@ Please open [issues](https://github.com/larsrollik/pypulsepal/issues) or [pull-r
 Please cite the original [PulsePal] and [PyBpod] code and publications that this package is based on.
 
 To cite `PyPulsePal` with a reference to the current version (as publicly documented on Zenodo), please use:
-> Rollik, Lars B. (2021). PyPulsePal: Python API for the PulsePal open-source pulse train generator. doi: [--doi--](https://doi.org/--doi--).
+> Rollik, Lars B. (2021). PyPulsePal: Python API for the PulsePal open-source pulse train generator. doi: [10.5281/zenodo.6379627](https://doi.org/10.5281/zenodo.6379627).
 
 **BibTeX**
 ```BibTeX
@@ -112,8 +112,8 @@ To cite `PyPulsePal` with a reference to the current version (as publicly docume
     year         = {2022},
     month        = mar,
     publisher    = {Zenodo},
-    url          = {https://doi.org/--doi--},
-    doi          = {--doi--},
+    url          = {https://doi.org/10.5281/zenodo.6379627},
+    doi          = {10.5281/zenodo.6379627},
   }
 ```
 
