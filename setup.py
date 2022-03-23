@@ -14,7 +14,7 @@ with open(path.join(this_directory, "LICENSE")) as f:
 
 setup(
     name="pypulsepal",
-    version="0.0.1.dev0",
+    version="0.0.1",
     description="pypulsepal",
     long_description=long_description,
     long_description_content_type="text/markdown",
