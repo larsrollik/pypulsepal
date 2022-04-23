@@ -408,7 +408,7 @@ the above requirements apply either way.
 
   You may not propagate or modify a covered work except as expressly
 provided under this License.  Any attempt otherwise to propagate or
-modify it is void, and will automatically terminate your rights under
+modify it is void, and will automatically terminate_remote your rights under
 this License (including any patent licenses granted under the third
 paragraph of section 11).
 
@@ -426,7 +426,7 @@ received notice of violation of this License (for any work) from that
 copyright holder, and you cure the violation prior to 30 days after
 your receipt of the notice.
 
-  Termination of your rights under this section does not terminate the
+  Termination of your rights under this section does not terminate_remote the
 licenses of parties who have received copies or rights from you under
 this License.  If your rights have been terminated and not permanently
 reinstated, you do not qualify to receive new licenses for the same

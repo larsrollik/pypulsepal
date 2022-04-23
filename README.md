@@ -2,12 +2,15 @@
 [![Website](https://img.shields.io/website?up_message=online&url=https%3A%2F%2Fgithub.com/larsrollik/pypulsepal)](https://github.com/larsrollik/pypulsepal)
 [![PyPI](https://img.shields.io/pypi/v/pypulsepal.svg)](https://pypi.org/project/pypulsepal)
 [![Wheel](https://img.shields.io/pypi/wheel/pypulsepal.svg)](https://pypi.org/project/pypulsepal)
+[![Contributions](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg)](https://github.com/larsrollik/pypulsepal/blob/main/CONTRIBUTING.md)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
 
 
 # PyPulsePal
 Python API for the PulsePal open-source pulse train generator
 ---
+Version: "0.0.2.dev0"
+
 This package provides an API to the [PulsePal] hardware.
 This API is a re-implementation of the original [PulsePal Python 3 API] that draws from the `pybpod-api` communication protoool.
 
