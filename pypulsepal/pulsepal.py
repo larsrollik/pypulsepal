@@ -95,7 +95,9 @@ class PulsePal:
 
     def _clear_read_queue(self):
         """Clears leftover items from serial read queue"""
-        return self._arcom.serial_object.read(self._arcom.serial_object.inWaiting())
+        return self._arcom.serial_object.read(
+            self._arcom.serial_object.inWaiting()
+        )
 
     def _read_confirmation(self):
         """Returns True for successful receipt of previous message"""
@@ -109,7 +111,10 @@ class PulsePal:
         self._arcom.serial_object.write(
             self.encoded_opcode + str.encode(SendMessageHeader.HANDSHAKE)
         )
-        handshake, firmware_version = self._arcom.read_char(), self._arcom.read_uint8()
+        handshake, firmware_version = (
+            self._arcom.read_char(),
+            self._arcom.read_uint8(),
+        )
         self._clear_read_queue()
 
         handshake_ok = handshake == ReceiveMessageHeader.HANDSHAKE_OK
@@ -160,7 +165,9 @@ class PulsePal:
         attr[channel] = param_value
         setattr(self, param_name, attr)
 
-    def program_one_param(self, channel=None, param_name=None, param_value=None):
+    def program_one_param(
+        self, channel=None, param_name=None, param_value=None
+    ):
         """Program one channel parameter (one parameter on one channel)."""
         param_name, param_code = resolve_param_name_code_pair(
             param_name_or_code=param_name
@@ -169,11 +176,17 @@ class PulsePal:
             param_name
         ), PARAM_SCALING.get(param_name)
 
-        logging.debug(f"Param value before voltage-to-bit correction: {param_value}")
+        logging.debug(
+            f"Param value before voltage-to-bit correction: {param_value}"
+        )
         if "volt" in param_name.lower():
-            param_value = volts_to_bytes(volt=param_value, dac_bitMax=self.dac_bitMax)
+            param_value = volts_to_bytes(
+                volt=param_value, dac_bitMax=self.dac_bitMax
+            )
 
-        logging.debug(f"Param value before time scaling correction: {param_value}")
+        logging.debug(
+            f"Param value before time scaling correction: {param_value}"
+        )
         param_value = param_value * param_scaling
 
         # Send
@@ -214,9 +227,13 @@ class PulsePal:
 
                 param_value = getattr(self, param_name)[channel]
                 success = self.program_one_param(
-                    channel=channel, param_name=param_name, param_value=param_value
+                    channel=channel,
+                    param_name=param_name,
+                    param_value=param_value,
                 )
-                logging.debug(param_name, channel, param_value, f"ok: {success}")
+                logging.debug(
+                    param_name, channel, param_value, f"ok: {success}"
+                )
                 if not success:
                     raise ValueError
 
@@ -225,9 +242,13 @@ class PulsePal:
         for trigger_channel in tqdm(range(self.nr_trigger_channels)):
             param_value = getattr(self, param_name)[trigger_channel]
             success = self.program_one_param(
-                channel=trigger_channel, param_name=param_name, param_value=param_value
+                channel=trigger_channel,
+                param_name=param_name,
+                param_value=param_value,
             )
-            logging.debug(param_name, trigger_channel, param_value, f"ok: {success}")
+            logging.debug(
+                param_name, trigger_channel, param_value, f"ok: {success}"
+            )
             if not success:
                 raise ValueError
 
@@ -263,7 +284,8 @@ class PulsePal:
         message = [
             self.encoded_opcode,
             encode_message(
-                CUSTOM_PULSE_TRAIN_OPCODES.get(pulse_train_id), encoding="uint8"
+                CUSTOM_PULSE_TRAIN_OPCODES.get(pulse_train_id),
+                encoding="uint8",
             ),
             # if model=1, additional 0 int here,
             encode_message(len(scaled_pulse_times), encoding="uint32"),
@@ -294,7 +316,8 @@ class PulsePal:
         message = [
             self.encoded_opcode,
             encode_message(
-                CUSTOM_PULSE_TRAIN_OPCODES.get(pulse_train_id), encoding="uint8"
+                CUSTOM_PULSE_TRAIN_OPCODES.get(pulse_train_id),
+                encoding="uint8",
             ),
             # if model=1, additional 0 int here,
             encode_message(len(scaled_pulse_times), encoding="uint32"),
@@ -319,7 +342,11 @@ class PulsePal:
         return self._read_confirmation()
 
     def trigger_selected_channels(
-        self, channel_1=False, channel_2=False, channel_3=False, channel_4=False
+        self,
+        channel_1=False,
+        channel_2=False,
+        channel_3=False,
+        channel_4=False,
     ):
         """Trigger specific channels
 
@@ -330,7 +357,10 @@ class PulsePal:
         :return:
         """
         combination_byte = (
-            (1 * channel_1) + (2 * channel_2) + (4 * channel_3) + (8 * channel_4)
+            (1 * channel_1)
+            + (2 * channel_2)
+            + (4 * channel_3)
+            + (8 * channel_4)
         )
         message = [
             self.encoded_opcode,
