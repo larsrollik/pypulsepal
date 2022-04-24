@@ -18,14 +18,8 @@ from pypulsepal.utils import encode_message
 from pypulsepal.utils import volts_to_bytes
 
 
-class PulsePalError(Exception):
-    """Convenience error object for PulsePal"""
-
-    pass
-
-
 class PulsePal:
-    """"""
+    """PulsePal API object"""
 
     # communication
     _arcom = None
@@ -144,7 +138,7 @@ class PulsePal:
         )
         handshake_ok = self._pulsepal_handshake()
         if not handshake_ok:
-            raise PulsePalError(
+            raise ConnectionError(
                 f"Could not connect PulsePal at '{serial_port}' with baudrate {baudrate}"
             )
         return self
