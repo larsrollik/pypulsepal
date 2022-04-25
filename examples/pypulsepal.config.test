@@ -1,0 +1,9 @@
+nr_trigger_channels = 14
+
+[channels]
+    [[0]]
+        isBiphasic = True
+        phase1Voltage = 6
+
+    [[1]]
+        phase1Voltage = 4
