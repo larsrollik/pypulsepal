@@ -1,3 +1,15 @@
+[//]: # (links)
+[Pulsepal]: https://github.com/sanworks/PulsePal
+[PyBpod]: https://github.com/pybpod/pybpod
+[PyBpod com ArCOM]: https://github.com/pybpod/pybpod-api/blob/master/pybpodapi/com/arcom.py
+[PyBpod com protocol]: https://github.com/pybpod/pybpod-api/blob/master/pybpodapi/bpod/bpod_com_protocol.py
+[PyBpod message headers]: https://github.com/pybpod/pybpod-api/blob/master/pybpodapi/com/protocol/send_msg_headers.py
+[PulsePal Python 3 API]: https://github.com/sanworks/PulsePal/blob/develop/Python/Python3/PulsePal.py
+[PulsePal .ino file]: https://github.com/sanworks/PulsePal/blob/develop/Firmware/PulsePal_2_0_1/PulsePal_2_0_1.ino
+[PulsePal param definitions]: https://sites.google.com/site/pulsepalwiki/matlab-gnu-octave/functions/programpulsepalparam
+[PulsePal USB v2 opcode list]: https://sites.google.com/site/pulsepalwiki/usb-serial-interface/usb-interface-v2-x
+
+[//]: # (badges)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6379627.svg)](https://doi.org/10.5281/zenodo.6379627)
 [![Website](https://img.shields.io/website?up_message=online&url=https%3A%2F%2Fgithub.com/larsrollik/pypulsepal)](https://github.com/larsrollik/pypulsepal)
 [![PyPI](https://img.shields.io/pypi/v/pypulsepal.svg)](https://pypi.org/project/pypulsepal)
@@ -9,10 +21,9 @@
 # PyPulsePal
 Python API for the PulsePal open-source pulse train generator
 ---
-Version: "0.0.2.dev0"
-
 This package provides an API to the [PulsePal] hardware.
-This API is a re-implementation of the original [PulsePal Python 3 API] that draws from the `pybpod-api` communication protoool.
+It is an alternative implementation of the original [PulsePal Python 3 API]
+and draws from the [PyBpod com ArCOM] communication classes.
 
 ## Example usage
 
@@ -146,13 +157,5 @@ For changes from the original implementation, see the git history since [commit 
   - to make overwrites on channels to get from value-based logic to channel parameter sets
   - add write function to save all settings to json for documentation
 
-[//]: # (links)
-[Pulsepal]: https://github.com/sanworks/PulsePal
-[PyBpod]: https://github.com/pybpod/pybpod
-[PyBpod com ArCOM]: https://github.com/pybpod/pybpod-api/blob/master/pybpodapi/com/arcom.py
-[PyBpod com protocol]: https://github.com/pybpod/pybpod-api/blob/master/pybpodapi/bpod/bpod_com_protocol.py
-[PyBpod message headers]: https://github.com/pybpod/pybpod-api/blob/master/pybpodapi/com/protocol/send_msg_headers.py
-[PulsePal Python 3 API]: https://github.com/sanworks/PulsePal/blob/develop/Python/Python3/PulsePal.py
-[PulsePal .ino file]: https://github.com/sanworks/PulsePal/blob/develop/Firmware/PulsePal_2_0_1/PulsePal_2_0_1.ino
-[PulsePal param definitions]: https://sites.google.com/site/pulsepalwiki/matlab-gnu-octave/functions/programpulsepalparam
-[PulsePal USB v2 opcode list]: https://sites.google.com/site/pulsepalwiki/usb-serial-interface/usb-interface-v2-x
+---
+Version: "0.0.2.dev0"

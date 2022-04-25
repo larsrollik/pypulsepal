@@ -18,14 +18,8 @@ from pypulsepal.utils import encode_message
 from pypulsepal.utils import volts_to_bytes
 
 
-class PulsePalError(Exception):
-    """Convenience error object for PulsePal"""
-
-    pass
-
-
 class PulsePal:
-    """"""
+    """PulsePal API object"""
 
     # communication
     _arcom = None
@@ -34,22 +28,24 @@ class PulsePal:
 
     # hardware attributes
     firmware_version = None
-    model = None
-    dac_bitMax = None
-    cycle_frequency = 20000
+    hardware_model = None
+    hardware_dac_bit_max = None
+    hardware_cycle_frequency = 20000
+    firmware_opcode = None
     nr_output_channels = 4
     nr_trigger_channels = 2
-    opcode = 213
     param_dtype_lookup = None
+
+    _config = None  # todo
 
     def __init__(
         self,
         serial_port=None,
         baudrate=115200,
-        cycle_frequency=PULSEPAL_CYCLE_FREQUENCY,
+        cycle_frequency=20000,
         nr_output_channels=4,
         nr_trigger_channels=2,
-        opcode=213,
+        firmware_opcode=213,
         **kwargs,
     ):
         """
@@ -73,10 +69,12 @@ class PulsePal:
         # Args
         self.serial_port = serial_port
         self.baudrate = baudrate
-        self.cycle_frequency = cycle_frequency
+        self.hardware_cycle_frequency = (
+            cycle_frequency or self.hardware_cycle_frequency
+        )
         self.nr_output_channels = nr_output_channels
         self.nr_trigger_channels = nr_trigger_channels
-        self.opcode = opcode
+        self.firmware_opcode = firmware_opcode or self.firmware_opcode
 
         # Convenience updates for debug inputs
         for k, v in kwargs.items():
@@ -87,11 +85,11 @@ class PulsePal:
 
     @property
     def encoded_opcode(self):
-        return encode_message(self.opcode, encoding="uint8")
+        return encode_message(self.firmware_opcode, encoding="uint8")
 
     @encoded_opcode.setter
     def encoded_opcode(self, value=None):
-        self.opcode = value
+        self.firmware_opcode = value
 
     def _clear_read_queue(self):
         """Clears leftover items from serial read queue"""
@@ -121,12 +119,12 @@ class PulsePal:
         if handshake_ok:
             self.firmware_version = firmware_version
             if firmware_version < 20:
-                self.model = 1
-                self.dac_bitMax = 255
+                self.hardware_model = 1
+                self.hardware_dac_bit_max = 255
                 self.param_dtype_lookup = PARAM_DTYPE_MODEL_1
             else:
-                self.model = 2
-                self.dac_bitMax = 65535
+                self.hardware_model = 2
+                self.hardware_dac_bit_max = 65535
                 self.param_dtype_lookup = PARAM_DTYPE_MODEL_2
 
         return True if handshake_ok else False
@@ -144,12 +142,12 @@ class PulsePal:
         )
         handshake_ok = self._pulsepal_handshake()
         if not handshake_ok:
-            raise PulsePalError(
+            raise ConnectionError(
                 f"Could not connect PulsePal at '{serial_port}' with baudrate {baudrate}"
             )
         return self
 
-    def _pulsepal_set_display(self, message="--> Py"):
+    def _pulsepal_set_display(self, message="> Py API"):
         """"""
         message_ascii = [ord(s) for s in message]
         self._arcom.write_array(
@@ -181,7 +179,7 @@ class PulsePal:
         )
         if "volt" in param_name.lower():
             param_value = volts_to_bytes(
-                volt=param_value, dac_bitMax=self.dac_bitMax
+                volt=param_value, dac_bitMax=self.hardware_dac_bit_max
             )
 
         logging.debug(
@@ -276,9 +274,13 @@ class PulsePal:
         scaled_pulse_times = []
         scaled_pulse_voltages = []
         for pulse_time, pulse_voltage in zip(pulse_times, pulse_voltages):
-            scaled_pulse_times.append(pulse_time * self.cycle_frequency)
+            scaled_pulse_times.append(
+                pulse_time * self.hardware_cycle_frequency
+            )
             scaled_pulse_voltages.append(
-                volts_to_bytes(volt=pulse_voltage, dac_bitMax=self.dac_bitMax)
+                volts_to_bytes(
+                    volt=pulse_voltage, dac_bitMax=self.hardware_dac_bit_max
+                )
             )
 
         message = [
@@ -307,10 +309,14 @@ class PulsePal:
         scaled_pulse_times = []
         scaled_pulse_voltages = []
         for pulse_index, pulse_voltage in enumerate(pulse_voltages):
-            pulse_time = pulse_index * pulse_width * self.cycle_frequency
+            pulse_time = (
+                pulse_index * pulse_width * self.hardware_cycle_frequency
+            )
             scaled_pulse_times.append(pulse_time)
             scaled_pulse_voltages.append(
-                volts_to_bytes(volt=pulse_voltage, dac_bitMax=self.dac_bitMax)
+                volts_to_bytes(
+                    volt=pulse_voltage, dac_bitMax=self.hardware_dac_bit_max
+                )
             )
 
         message = [
@@ -343,7 +349,7 @@ class PulsePal:
 
     def trigger_selected_channels(
         self,
-        channel_1=False,
+        channel_1=False,  # fixme: this indexing is inconsistent with the expected config indices range 0-3
         channel_2=False,
         channel_3=False,
         channel_4=False,
@@ -371,7 +377,7 @@ class PulsePal:
         return self._read_confirmation()
 
     def trigger_all_channels(self):
-        return self.trigger_channels(
+        return self.trigger_selected_channels(
             channel_1=True, channel_2=True, channel_3=True, channel_4=True
         )
 
@@ -384,7 +390,9 @@ class PulsePal:
         self._arcom.write_array(b"".join(message))
         return self._read_confirmation()
 
-    def save_settings(self):
+    def save_settings(
+        self,
+    ):  # fixme: rename, so it's clear this is persisting the settings on the device
         """"""
         message = [
             self.encoded_opcode,
@@ -392,6 +400,75 @@ class PulsePal:
         ]
         self._arcom.write_array(b"".join(message))
         return self._read_confirmation()  # fixme: returns False
+
+    def load_from_config(self, config_path=None):
+        from pathlib import Path
+        from configobj import ConfigObj
+        from validate import Validator
+        from pypulsepal import config as ppp_config
+
+        config_spec_path = (
+            Path(ppp_config.__path__[0]) / "pypulsepal.config.spec"
+        )
+        assert Path(config_path).exists() and config_spec_path.exists()
+
+        config = ConfigObj(
+            infile=str(config_path),
+            configspec=str(config_spec_path),
+            unrepr=True,
+            list_values=True,
+        )
+        v = Validator()
+        validation_success = config.validate(v, copy=True)
+        if isinstance(validation_success, bool) and validation_success is True:
+            self.config = config.dict()
+
+    @property
+    def config(self):
+        return self._config
+
+    @config.setter
+    def config(self, new_config: dict = None):
+        # update params from config
+        for k, v in new_config.items():
+            if hasattr(self, k):
+                setattr(self, k, v)
+            else:
+                print(
+                    f"Config contains property '{k}', but not a property of 'self'!"
+                )
+
+        for channel_name, channel_params in new_config.get(
+            "channels", {}
+        ).items():
+            for prop_name, prop_value in channel_params.items():
+                before = getattr(self, prop_name)[int(channel_name)]
+                getattr(self, prop_name)[int(channel_name)] = prop_value
+                print(
+                    channel_name,
+                    prop_name,
+                    " : ",
+                    before,
+                    "-->>",
+                    getattr(self, prop_name)[int(channel_name)],
+                )
+
+        for channel_name, channel_params in new_config.get(
+            "triggers", {}
+        ).items():
+            for prop_name, prop_value in channel_params.items():
+                before = getattr(self, prop_name)[int(channel_name)]
+                getattr(self, prop_name)[int(channel_name)] = prop_value
+                print(
+                    channel_name,
+                    prop_name,
+                    " : ",
+                    before,
+                    "-->>",
+                    getattr(self, prop_name)[int(channel_name)],
+                )
+
+        self._config = new_config
 
     def __enter__(self):
         return self
