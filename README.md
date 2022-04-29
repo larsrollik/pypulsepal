@@ -74,6 +74,30 @@ with PulsePal(serial_port="/dev/ttyACM0") as pp:
 
 ```
 
+
+#### Load parameters from config file
+
+```python
+from pathlib import Path
+
+from pypulsepal import PulsePal
+
+
+def run_example():
+    config_path = "../pypulsepal/config/pypulsepal.incomplete_default_config.yaml"
+    serial_port = "/dev/ttyACM0"
+
+    p = PulsePal(serial_port=serial_port)
+    p.load_from_config(config_path=config_path)
+
+    print(p)
+
+
+if __name__ == "__main__":
+    run_example()
+
+```
+
 #### Write `default` params to all channels
 
 ```python
