@@ -17,6 +17,8 @@ from pypulsepal.definitions import TRIGGER_PARAM_DEFAULTS
 from pypulsepal.utils import encode_message
 from pypulsepal.utils import volts_to_bytes
 
+ENCODING_UINT8 = "uint8"
+
 
 class PulsePalError(Exception):
     """Convenience error object for PulsePal"""
@@ -87,7 +89,7 @@ class PulsePal:
 
     @property
     def encoded_opcode(self):
-        return encode_message(self.opcode, encoding="uint8")
+        return encode_message(self.opcode, encoding=ENCODING_UINT8)
 
     @encoded_opcode.setter
     def encoded_opcode(self, value=None):
@@ -155,7 +157,7 @@ class PulsePal:
         self._arcom.write_array(
             *[
                 self.encoded_opcode,
-                encode_message(SendMessageHeader.DISPLAY, encoding="uint8"),
+                encode_message(SendMessageHeader.DISPLAY, encoding=ENCODING_UINT8),
                 *message_ascii,
             ]
         )
@@ -192,9 +194,9 @@ class PulsePal:
         # Send
         message = [
             self.encoded_opcode,
-            encode_message(SendMessageHeader.PROGRAM_ONE, encoding="uint8"),
-            encode_message(param_code, encoding="uint8"),
-            encode_message(channel + 1, encoding="uint8"),
+            encode_message(SendMessageHeader.PROGRAM_ONE, encoding=ENCODING_UINT8),
+            encode_message(param_code, encoding=ENCODING_UINT8),
+            encode_message(channel + 1, encoding=ENCODING_UINT8),
             encode_message(param_value, encoding=param_dtype),
         ]
         self._arcom.write_array(b"".join(message))
@@ -285,7 +287,7 @@ class PulsePal:
             self.encoded_opcode,
             encode_message(
                 CUSTOM_PULSE_TRAIN_OPCODES.get(pulse_train_id),
-                encoding="uint8",
+                encoding=ENCODING_UINT8,
             ),
             # if model=1, additional 0 int here,
             encode_message(len(scaled_pulse_times), encoding="uint32"),
@@ -317,7 +319,7 @@ class PulsePal:
             self.encoded_opcode,
             encode_message(
                 CUSTOM_PULSE_TRAIN_OPCODES.get(pulse_train_id),
-                encoding="uint8",
+                encoding=ENCODING_UINT8,
             ),
             # if model=1, additional 0 int here,
             encode_message(len(scaled_pulse_times), encoding="uint32"),
@@ -334,9 +336,9 @@ class PulsePal:
         """"""
         message = [
             self.encoded_opcode,
-            encode_message(SendMessageHeader.CONTINUOUS, encoding="uint8"),
-            encode_message(channel, encoding="uint8"),
-            encode_message(state, encoding="uint8"),
+            encode_message(SendMessageHeader.CONTINUOUS, encoding=ENCODING_UINT8),
+            encode_message(channel, encoding=ENCODING_UINT8),
+            encode_message(state, encoding=ENCODING_UINT8),
         ]
         self._arcom.write_array(b"".join(message))
         return self._read_confirmation()
@@ -364,8 +366,8 @@ class PulsePal:
         )
         message = [
             self.encoded_opcode,
-            encode_message(SendMessageHeader.SOFT_TRIGGER, encoding="uint8"),
-            encode_message(combination_byte, encoding="uint8"),
+            encode_message(SendMessageHeader.SOFT_TRIGGER, encoding=ENCODING_UINT8),
+            encode_message(combination_byte, encoding=ENCODING_UINT8),
         ]
         self._arcom.write_array(b"".join(message))
         return self._read_confirmation()
@@ -379,7 +381,7 @@ class PulsePal:
         """"""
         message = [
             self.encoded_opcode,
-            encode_message(SendMessageHeader.ABORT_ALL, encoding="uint8"),
+            encode_message(SendMessageHeader.ABORT_ALL, encoding=ENCODING_UINT8),
         ]
         self._arcom.write_array(b"".join(message))
         return self._read_confirmation()
@@ -388,7 +390,7 @@ class PulsePal:
         """"""
         message = [
             self.encoded_opcode,
-            encode_message(SendMessageHeader.DISCONNECT, encoding="uint8"),
+            encode_message(SendMessageHeader.DISCONNECT, encoding=ENCODING_UINT8),
         ]
         self._arcom.write_array(b"".join(message))
         return self._read_confirmation()  # fixme: returns False
