@@ -371,7 +371,7 @@ class PulsePal:
         return self._read_confirmation()
 
     def trigger_all_channels(self):
-        return self.trigger_channels(
+        return self.trigger_selected_channels(
             channel_1=True, channel_2=True, channel_3=True, channel_4=True
         )
 
