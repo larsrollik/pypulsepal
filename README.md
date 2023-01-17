@@ -18,6 +18,7 @@ This API is a re-implementation of the original [PulsePal Python 3 API] that dra
 
 #### script/function
 ```python
+import time
 from pypulsepal import PulsePal
 
 serial_port = "/dev/ttyACM0"  # for unix or "COM"-style port names for Windows
@@ -39,18 +40,36 @@ pp.upload_all()
 # Trigger selected channels
 pp.trigger_selected_channels(channel_2=True, channel_4=True)
 
-# Stop outputs
-pp.stop_all_outputs()
-
-# Trigger all channels
-pp.trigger_all_channels()
+time.sleep(1)
 
 # Stop outputs
 pp.stop_all_outputs()
+
+time.sleep(1)
 
 # Save settings (also done automatically on disconnect)
 pp.save_settings()
 
+
+```
+
+##### Channels can also be triggered all at once
+```python
+import time
+from pypulsepal import PulsePal
+
+serial_port = "/dev/ttyACM0"  # for unix or "COM"-style port names for Windows
+
+# Create PulsePal object
+pp = PulsePal(serial_port=serial_port)
+
+# Trigger all channels
+pp.trigger_all_channels()
+
+time.sleep(1)
+
+# Stop outputs
+pp.stop_all_outputs()
 
 ```
 
