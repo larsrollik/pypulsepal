@@ -36,8 +36,13 @@ pp.set_resting_voltage(channel=2, voltage=4.2)
 # Upload parameters
 pp.upload_all()
 
-# Trigger channels
+# Trigger selected channels
 pp.trigger_selected_channels(channel_2=True, channel_4=True)
+
+# Stop outputs
+pp.stop_all_outputs()
+
+# Trigger all channels
 pp.trigger_all_channels()
 
 # Stop outputs
