@@ -2,19 +2,20 @@ import logging
 
 from pybpodapi.com.arcom import ArCOM
 
-from pypulsepal.definitions import CHANNEL_PARAM_DEFAULTS
-from pypulsepal.definitions import CUSTOM_PULSE_TRAIN_OPCODES
-from pypulsepal.definitions import PARAM_DTYPE_MODEL_1
-from pypulsepal.definitions import PARAM_DTYPE_MODEL_2
-from pypulsepal.definitions import PARAM_SCALING
-from pypulsepal.definitions import PULSEPAL_CYCLE_FREQUENCY
-from pypulsepal.definitions import ReceiveMessageHeader
-from pypulsepal.definitions import resolve_param_name_code_pair
-from pypulsepal.definitions import resolve_trigger_name_code_pair
-from pypulsepal.definitions import SendMessageHeader
-from pypulsepal.definitions import TRIGGER_PARAM_DEFAULTS
-from pypulsepal.utils import encode_message
-from pypulsepal.utils import volts_to_bytes
+from pypulsepal.definitions import (
+    CHANNEL_PARAM_DEFAULTS,
+    CUSTOM_PULSE_TRAIN_OPCODES,
+    PARAM_DTYPE_MODEL_1,
+    PARAM_DTYPE_MODEL_2,
+    PARAM_SCALING,
+    PULSEPAL_CYCLE_FREQUENCY,
+    TRIGGER_PARAM_DEFAULTS,
+    ReceiveMessageHeader,
+    SendMessageHeader,
+    resolve_param_name_code_pair,
+    resolve_trigger_name_code_pair,
+)
+from pypulsepal.utils import encode_message, volts_to_bytes
 
 ENCODING_UINT8 = "uint8"
 
@@ -62,7 +63,7 @@ class PulsePal:
         :param nr_trigger_channels:
         :param kwargs:
         """
-        super(PulsePal, self).__init__()
+        super().__init__()
 
         # Generate class attributes according to default channel parameters
         for param, default_value in CHANNEL_PARAM_DEFAULTS.items():
@@ -96,9 +97,7 @@ class PulsePal:
 
     def _clear_read_queue(self):
         """Clears leftover items from serial read queue"""
-        return self._arcom.serial_object.read(
-            self._arcom.serial_object.inWaiting()
-        )
+        return self._arcom.serial_object.read(self._arcom.serial_object.inWaiting())
 
     def _read_confirmation(self):
         """Returns True for successful receipt of previous message"""
@@ -139,7 +138,7 @@ class PulsePal:
                 + str.encode("PYTHON")
             )
 
-        return True if handshake_ok else False
+        return bool(handshake_ok)
 
     def connect(self, serial_port, baudrate=115200, timeout=1):
         """Connect (& handshake) with hardware
@@ -155,7 +154,8 @@ class PulsePal:
         handshake_ok = self._pulsepal_handshake()
         if not handshake_ok:
             raise PulsePalError(
-                f"Could not connect PulsePal at '{serial_port}' with baudrate {baudrate}"
+                f"Could not connect PulsePal at '{serial_port}' "
+                f"with baudrate {baudrate}"
             )
         return self
 
@@ -175,28 +175,21 @@ class PulsePal:
         attr[channel] = param_value
         setattr(self, param_name, attr)
 
-    def program_one_param(
-        self, channel=None, param_name=None, param_value=None
-    ):
+    def program_one_param(self, channel=None, param_name=None, param_value=None):
         """Program one channel parameter (one parameter on one channel)."""
         param_name, param_code = resolve_param_name_code_pair(
             param_name_or_code=param_name
         )
-        param_dtype, param_scaling = self.param_dtype_lookup.get(
-            param_name
-        ), PARAM_SCALING.get(param_name)
-
-        logging.debug(
-            f"Param value before voltage-to-bit correction: {param_value}"
+        param_dtype, param_scaling = (
+            self.param_dtype_lookup.get(param_name),
+            PARAM_SCALING.get(param_name),
         )
+
+        logging.debug(f"Param value before voltage-to-bit correction: {param_value}")
         if "volt" in param_name.lower():
-            param_value = volts_to_bytes(
-                volt=param_value, dac_bitMax=self.dac_bitMax
-            )
+            param_value = volts_to_bytes(volt=param_value, dac_bitMax=self.dac_bitMax)
 
-        logging.debug(
-            f"Param value before time scaling correction: {param_value}"
-        )
+        logging.debug(f"Param value before time scaling correction: {param_value}")
         param_value = param_value * param_scaling
 
         # Send
@@ -243,9 +236,7 @@ class PulsePal:
                     param_name=param_name,
                     param_value=param_value,
                 )
-                logging.debug(
-                    f"{param_name} ch{channel} = {param_value} ok: {success}"
-                )
+                logging.debug(f"{param_name} ch{channel} = {param_value} ok: {success}")
                 if not success:
                     raise ValueError
 
@@ -297,10 +288,12 @@ class PulsePal:
             for channel in range(self.nr_output_channels):
                 for param in volt_param_names:
                     program_values_16.append(
-                        int(volts_to_bytes(
-                            volt=getattr(self, param)[channel],
-                            dac_bitMax=self.dac_bitMax,
-                        ))
+                        int(
+                            volts_to_bytes(
+                                volt=getattr(self, param)[channel],
+                                dac_bitMax=self.dac_bitMax,
+                            )
+                        )
                     )
             # 8-bit params: 4 params × 4 channels
             program_values_8 = []
@@ -314,27 +307,41 @@ class PulsePal:
             program_values_8 = []
             for channel in range(self.nr_output_channels):
                 program_values_8.append(int(self.isBiphasic[channel]))
-                program_values_8.append(int(volts_to_bytes(
-                    volt=self.phase1Voltage[channel], dac_bitMax=self.dac_bitMax
-                )))
-                program_values_8.append(int(volts_to_bytes(
-                    volt=self.phase2Voltage[channel], dac_bitMax=self.dac_bitMax
-                )))
+                program_values_8.append(
+                    int(
+                        volts_to_bytes(
+                            volt=self.phase1Voltage[channel], dac_bitMax=self.dac_bitMax
+                        )
+                    )
+                )
+                program_values_8.append(
+                    int(
+                        volts_to_bytes(
+                            volt=self.phase2Voltage[channel], dac_bitMax=self.dac_bitMax
+                        )
+                    )
+                )
                 program_values_8.append(int(self.customTrainID[channel]))
                 program_values_8.append(int(self.customTrainTarget[channel]))
                 program_values_8.append(int(self.customTrainLoop[channel]))
-                program_values_8.append(int(volts_to_bytes(
-                    volt=self.restingVoltage[channel], dac_bitMax=self.dac_bitMax
-                )))
+                program_values_8.append(
+                    int(
+                        volts_to_bytes(
+                            volt=self.restingVoltage[channel],
+                            dac_bitMax=self.dac_bitMax,
+                        )
+                    )
+                )
 
-        # Trigger link params: linkTriggerChannel1 for all channels, then linkTriggerChannel2
-        program_values_tl = (
-            [int(self.linkTriggerChannel1[ch]) for ch in range(self.nr_output_channels)]
-            + [int(self.linkTriggerChannel2[ch]) for ch in range(self.nr_output_channels)]
-        )
+        # Trigger link params: linkTriggerChannel1 per channel, then linkTriggerChannel2
+        program_values_tl = [
+            int(self.linkTriggerChannel1[ch]) for ch in range(self.nr_output_channels)
+        ] + [int(self.linkTriggerChannel2[ch]) for ch in range(self.nr_output_channels)]
 
         # Trigger modes for all trigger channels
-        trigger_modes = [int(self.triggerMode[ch]) for ch in range(self.nr_trigger_channels)]
+        trigger_modes = [
+            int(self.triggerMode[ch]) for ch in range(self.nr_trigger_channels)
+        ]
 
         message = [
             self.encoded_opcode,
@@ -486,7 +493,7 @@ class PulsePal:
         return self._read_confirmation()
 
     def get_logic(self, channel=None):
-        """Read current Arduino digital logic level on an output channel (model 2, opcode 87).
+        """Read current Arduino digital logic level on an output channel (opcode 87).
 
         :param channel: 0-indexed output channel
         :return: logic level (0 or 1)
@@ -515,10 +522,7 @@ class PulsePal:
         :return:
         """
         combination_byte = (
-            (1 * channel_1)
-            + (2 * channel_2)
-            + (4 * channel_3)
-            + (8 * channel_4)
+            (1 * channel_1) + (2 * channel_2) + (4 * channel_3) + (8 * channel_4)
         )
         message = [
             self.encoded_opcode,

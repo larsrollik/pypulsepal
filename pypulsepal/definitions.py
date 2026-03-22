@@ -188,9 +188,9 @@ def resolve_param_name_code_pair(param_name_or_code=None):
     """Expect parameter name or code (integer) and return both name and code"""
     param_name = param_code = param_name_or_code
     if isinstance(param_name_or_code, str):
-        param_code = PARAM_NAMES.get(param_name_or_code, None)
+        param_code = PARAM_NAMES.get(param_name_or_code)
     elif isinstance(param_name_or_code, int):
-        param_name = PARAM_CODES.get(param_name_or_code, None)
+        param_name = PARAM_CODES.get(param_name_or_code)
     else:
         raise ValueError(param_name_or_code)
 
@@ -201,9 +201,9 @@ def resolve_param_name_code_pair(param_name_or_code=None):
 def resolve_trigger_name_code_pair(trigger_name_or_code=None):
     trigger_name = trigger_code = trigger_name_or_code
     if isinstance(trigger_name_or_code, str):
-        trigger_code = PARAM_NAMES.get(trigger_name_or_code, None)
+        trigger_code = PARAM_NAMES.get(trigger_name_or_code)
     elif isinstance(trigger_name_or_code, int):
-        trigger_name = PARAM_CODES.get(trigger_name_or_code, None)
+        trigger_name = PARAM_CODES.get(trigger_name_or_code)
     else:
         raise ValueError(trigger_name_or_code)
 
