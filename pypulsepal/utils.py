@@ -8,8 +8,6 @@ def volts_to_bytes(volt=None, dac_bitMax=None):
 
 def encode_message(*message_parts, encoding=None):
     """Encode message as byte string for serial interface communication"""
-    message = [
-        np.array(part, dtype=encoding).tobytes() for part in message_parts
-    ]
+    message = [np.array(part, dtype=encoding).tobytes() for part in message_parts]
     out = b"".join(message)
     return out

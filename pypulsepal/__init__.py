@@ -1,7 +1,7 @@
 __author__ = "Lars B. Rollik"
-__version__ = "0.0.2.dev0"
+__version__ = "0.1.0"
 
-from pypulsepal.pulsepal import PulsePal
+from pypulsepal.pulsepal import PulsePal as PulsePal
 
 
 def run():

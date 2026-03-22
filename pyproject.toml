@@ -1,24 +1,52 @@
-
-[tool.black]
-target-version = ['py36', 'py37', 'py38', 'py39']
-skip-string-normalization = false
-line-length = 79
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-  | \ .git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
-
 [build-system]
 requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+include = ["*.py", "*.pyi"]
+extend-exclude = [
+    "*.eggs",
+    "*.git",
+    "*.hg",
+    "*.mypy_cache",
+    "*.tox",
+    "*.venv",
+    "*_build",
+    "*buck-out",
+    "*build",
+    "*dist",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "UP",
+    "YTT",
+    "SIM",
+    "PTH",
+    "TCH",
+    "PYI",
+]
+ignore = []
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.mypy]
+warn_return_any = false
+ignore_missing_imports = true

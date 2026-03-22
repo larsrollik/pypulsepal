@@ -1,6 +1,5 @@
 from pypulsepal import PulsePal
-from pypulsepal.definitions import CHANNEL_PARAM_TEST
-from pypulsepal.definitions import TRIGGER_PARAM_TEST
+from pypulsepal.definitions import CHANNEL_PARAM_TEST, TRIGGER_PARAM_TEST
 
 
 def write_test_settings_for_manual_check(serial_port=None):
