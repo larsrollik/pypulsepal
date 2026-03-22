@@ -9,7 +9,7 @@
 # PyPulsePal
 Python API for the PulsePal open-source pulse train generator
 ---
-Version: "0.0.2.dev0"
+Version: "0.1.0.dev0"
 
 This package provides an API to the [PulsePal] hardware.
 This API is a re-implementation of the original [PulsePal Python 3 API] that draws from the `pybpod-api` communication protoool.
