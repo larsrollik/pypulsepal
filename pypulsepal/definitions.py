@@ -180,7 +180,7 @@ class ReceiveMessageHeader:
 
 CUSTOM_PULSE_TRAIN_OPCODES = {
     0: SendMessageHeader.PROGRAM_CUSTOM_1,
-    1: SendMessageHeader.PROGRAM_CUSTOM_1,
+    1: SendMessageHeader.PROGRAM_CUSTOM_2,
 }
 
 
